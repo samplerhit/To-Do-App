@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>To-Do List</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      #app {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      textarea {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+      }
+      button {
+        display: block;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0069d9;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        margin-top: 2rem;
+      }
+      li {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .task-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      .task-desc {
+        font-size: 18px;
+      }
+      .task-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>To-Do List</h1>
+      <form id="add-task-form">
+        <label for="task-title">Task Title:</label>
+        <input type="text" id="task-title" name="task-title" required />
+        <label for="task-desc">Task Description:</label>
+        <textarea id="task-desc" name="task-desc" rows="4" required></textarea>
+        <button type="submit">Add Task</button>
+      </form>
+      <ul id="task-list"></ul>
+    </div>
+
+    <script>
+      const form = document.getElementById("add-task-form");
+      const list = document.getElementById("task-list");
+
+      // Retrieve existing tasks from localStorage
+      let itemArray = JSON.parse(localStorage.getItem("items")) || [];
+
+      // Function to render tasks
+      function renderTasks() {
+        list.innerHTML = ""; // Clear list before re-rendering
+        itemArray.forEach((element, index) => {
+          const listItem = document.createElement("li");
+
+          const taskTitle = document.createElement("h1");
+          taskTitle.textContent = element.task; // Fixed key name
+
+          const taskDesc = document.createElement("p");
+          taskDesc.textContent = element.description; // Fixed key name
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.addEventListener("click", () => deleteTask(index));
+
+          listItem.appendChild(taskTitle);
+          listItem.appendChild(taskDesc);
+          listItem.appendChild(deleteBtn);
+
+          list.appendChild(listItem);
+        });
+      }
+
+      // Handle form submission
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const task = document.getElementById("task-title").value;
+        const desc = document.getElementById("task-desc").value;
+
+        const obj = {
+          task, // Fixed key name
+          description: desc, // Fixed key name
+        };
+
+        itemArray.push(obj);
+        localStorage.setItem("items", JSON.stringify(itemArray));
+        form.reset(); // Clear input fields
+        renderTasks(); // Re-render list
+      });
+
+      // Delete a task
+      function deleteTask(index) {
+        itemArray.splice(index
